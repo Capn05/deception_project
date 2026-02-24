@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(brew list:*)",
+      "Bash(echo:*)",
+      "Bash(brew install:*)",
+      "Bash(node -e:*)",
+      "WebSearch",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:docs.cartesia.ai)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:developers.deepgram.com)",
+      "WebFetch(domain:deepgram.com)",
+      "WebFetch(domain:docs.livekit.io)",
+      "Bash(ls:*)",
+      "Bash(xargs:*)",
+      "Bash(npx tsc:*)",
+      "WebFetch(domain:cartesia.ai)"
+    ]
+  }
+}
