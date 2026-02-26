@@ -1,5 +1,4 @@
 import { GamePhase, PlayerRole, RoomState } from './game.js';
-import { PressureMatchState } from './puzzle.js';
 
 // ── Client → Server ──
 
@@ -67,7 +66,7 @@ export interface PhaseChangeMessage {
 export interface PuzzleStateMessage {
   type: 'PUZZLE_STATE';
   puzzleType: string;
-  state: Partial<PressureMatchState>;
+  state: Record<string, unknown>;
 }
 
 export interface PuzzleResultMessage {

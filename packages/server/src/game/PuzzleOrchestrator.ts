@@ -1,31 +1,42 @@
 import { PlayerRole, PuzzleType, PUZZLE_TIME_LIMIT } from '@abyssal-echo/shared';
 import { GameRoom } from '../rooms/GameRoom.js';
 import { PressureMatchPuzzle } from './puzzles/PressureMatchPuzzle.js';
+import { ValveRoutePuzzle } from './puzzles/ValveRoutePuzzle.js';
+
+type AnyPuzzle = PressureMatchPuzzle | ValveRoutePuzzle;
 
 export class PuzzleOrchestrator {
-  private currentPuzzle: PressureMatchPuzzle | null = null;
+  private currentPuzzle: AnyPuzzle | null = null;
+  private currentPuzzleType: PuzzleType | null = null;
   private timer: ReturnType<typeof setInterval> | null = null;
   private timeRemaining = PUZZLE_TIME_LIMIT;
 
   constructor(private room: GameRoom) {}
 
   startPuzzle() {
-    this.currentPuzzle = new PressureMatchPuzzle();
+    // 50/50 random puzzle selection
+    if (Math.random() < 0.5) {
+      this.currentPuzzle = new PressureMatchPuzzle();
+      this.currentPuzzleType = PuzzleType.PressureMatch;
+    } else {
+      this.currentPuzzle = new ValveRoutePuzzle();
+      this.currentPuzzleType = PuzzleType.WireRoute;
+    }
+
     this.timeRemaining = PUZZLE_TIME_LIMIT;
 
-    // Send role-filtered state
     const observerState = this.currentPuzzle.getStateForRole(PlayerRole.Observer);
     const operatorState = this.currentPuzzle.getStateForRole(PlayerRole.Operator);
 
     this.room.broadcastToRole(PlayerRole.Observer, {
       type: 'PUZZLE_STATE',
-      puzzleType: PuzzleType.PressureMatch,
+      puzzleType: this.currentPuzzleType,
       state: observerState,
     });
 
     this.room.broadcastToRole(PlayerRole.Operator, {
       type: 'PUZZLE_STATE',
-      puzzleType: PuzzleType.PressureMatch,
+      puzzleType: this.currentPuzzleType,
       state: operatorState,
     });
 
@@ -38,9 +49,41 @@ export class PuzzleOrchestrator {
     const role = this.room.getPlayerRole(playerId);
     if (role !== PlayerRole.Operator) return false;
 
+    if (this.currentPuzzleType === PuzzleType.WireRoute) {
+      const puzzle = this.currentPuzzle as ValveRoutePuzzle;
+
+      if (action === 'TOGGLE') {
+        puzzle.toggleValve(value);
+        this.room.broadcastToRole(PlayerRole.Operator, {
+          type: 'PUZZLE_STATE',
+          puzzleType: PuzzleType.WireRoute,
+          state: puzzle.getStateForRole(PlayerRole.Operator),
+        });
+        return false;
+      }
+
+      if (action === 'SUBMIT') {
+        this.stopTimer();
+        const result = puzzle.checkAnswer();
+        this.room.broadcast({
+          type: 'PUZZLE_RESULT',
+          correct: result.correct,
+          targetValue: result.totalCount,
+          submittedValue: result.correctCount,
+          tolerance: 0,
+        });
+        return true;
+      }
+
+      return false;
+    }
+
+    // PressureMatch
+    const puzzle = this.currentPuzzle as PressureMatchPuzzle;
+
     if (action === 'SUBMIT') {
       this.stopTimer();
-      const result = this.currentPuzzle.checkAnswer(value);
+      const result = puzzle.checkAnswer(value);
       this.room.broadcast({
         type: 'PUZZLE_RESULT',
         correct: result.correct,
@@ -52,12 +95,11 @@ export class PuzzleOrchestrator {
     }
 
     if (action === 'ADJUST') {
-      this.currentPuzzle.setCurrentPressure(value);
-      // Send updated state to operator only
+      puzzle.setCurrentPressure(value);
       this.room.broadcastToRole(PlayerRole.Operator, {
         type: 'PUZZLE_STATE',
         puzzleType: PuzzleType.PressureMatch,
-        state: this.currentPuzzle.getStateForRole(PlayerRole.Operator),
+        state: puzzle.getStateForRole(PlayerRole.Operator),
       });
     }
 
@@ -65,10 +107,16 @@ export class PuzzleOrchestrator {
   }
 
   getCurrentPuzzleInfo(): { puzzleType: string; targetValue?: number } | null {
-    if (!this.currentPuzzle) return null;
+    if (!this.currentPuzzle || !this.currentPuzzleType) return null;
+
+    if (this.currentPuzzleType === PuzzleType.WireRoute) {
+      return { puzzleType: PuzzleType.WireRoute };
+    }
+
+    const puzzle = this.currentPuzzle as PressureMatchPuzzle;
     return {
       puzzleType: PuzzleType.PressureMatch,
-      targetValue: this.currentPuzzle.getTargetPressure(),
+      targetValue: puzzle.getTargetPressure(),
     };
   }
 
@@ -78,16 +126,28 @@ export class PuzzleOrchestrator {
       this.room.broadcast({ type: 'TIMER_UPDATE', remaining: this.timeRemaining });
       if (this.timeRemaining <= 0) {
         this.stopTimer();
-        // Auto-submit with current value
         if (this.currentPuzzle) {
-          const result = this.currentPuzzle.checkAnswer(this.currentPuzzle.getCurrentPressure());
-          this.room.broadcast({
-            type: 'PUZZLE_RESULT',
-            correct: result.correct,
-            targetValue: result.targetValue,
-            submittedValue: result.submittedValue,
-            tolerance: result.tolerance,
-          });
+          if (this.currentPuzzleType === PuzzleType.WireRoute) {
+            const puzzle = this.currentPuzzle as ValveRoutePuzzle;
+            const result = puzzle.checkAnswer();
+            this.room.broadcast({
+              type: 'PUZZLE_RESULT',
+              correct: result.correct,
+              targetValue: result.totalCount,
+              submittedValue: result.correctCount,
+              tolerance: 0,
+            });
+          } else {
+            const puzzle = this.currentPuzzle as PressureMatchPuzzle;
+            const result = puzzle.checkAnswer(puzzle.getCurrentPressure());
+            this.room.broadcast({
+              type: 'PUZZLE_RESULT',
+              correct: result.correct,
+              targetValue: result.targetValue,
+              submittedValue: result.submittedValue,
+              tolerance: result.tolerance,
+            });
+          }
         }
       }
     }, 1000);

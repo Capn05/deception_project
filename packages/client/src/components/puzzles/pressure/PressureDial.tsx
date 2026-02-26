@@ -6,7 +6,7 @@ import { GlowText } from '../../shared/GlowText';
 
 export function PressureDial() {
   const puzzleData = usePuzzleStore((s) => s.puzzleData);
-  const [localValue, setLocalValue] = useState(puzzleData.currentPressure ?? 500);
+  const [localValue, setLocalValue] = useState((puzzleData.currentPressure as number | undefined) ?? 500);
 
   const handleChange = (value: number) => {
     setLocalValue(value);
@@ -120,7 +120,7 @@ export function PressureDial() {
       </button>
 
       <p style={{ color: 'var(--text-dim)', fontSize: '0.7rem' }}>
-        TOLERANCE: +/- {puzzleData.tolerance ?? '?'}
+        TOLERANCE: +/- {(puzzleData.tolerance as number | undefined) ?? '?'}
       </p>
     </div>
   );

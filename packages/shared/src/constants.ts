@@ -25,3 +25,4 @@ export const LEVIATHAN_BASE_PROBABILITY = 0.15;        // 15% in round 1
 export const LEVIATHAN_PROBABILITY_INCREMENT = 0.10;   // +10% per round → 55% in round 5
 export const LEVIATHAN_CONTENT_CONFIDENCE_THRESHOLD = 0.7;
 export const LEVIATHAN_IDENTITY = 'leviathan';         // hidden participant identity
+export const VALVE_COUNT = 6;

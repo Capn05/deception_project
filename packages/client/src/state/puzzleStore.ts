@@ -1,9 +1,9 @@
 import { create } from 'zustand';
-import { PuzzleType, PressureMatchState } from '@abyssal-echo/shared';
+import { PuzzleType } from '@abyssal-echo/shared';
 
 interface PuzzleState {
   puzzleType: PuzzleType | null;
-  puzzleData: Partial<PressureMatchState>;
+  puzzleData: Record<string, unknown>;
   lastResult: {
     correct: boolean;
     targetValue: number;
@@ -11,7 +11,7 @@ interface PuzzleState {
     tolerance: number;
   } | null;
 
-  setPuzzleState: (type: PuzzleType, data: Partial<PressureMatchState>) => void;
+  setPuzzleState: (type: PuzzleType, data: Record<string, unknown>) => void;
   setResult: (result: PuzzleState['lastResult']) => void;
   reset: () => void;
 }

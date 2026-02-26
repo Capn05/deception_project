@@ -12,11 +12,11 @@ export interface PressureMatchState {
   submitted: boolean;
 }
 
-// Phase 2 stubs
-export interface WireRouteState {
-  connections: Array<{ from: string; to: string }>;
-  correctRoute: string[];
-  playerRoute: string[];
+export interface ValveRouteState {
+  valves: { id: number; isOpen: boolean }[];   // current operator-controlled state
+  targetStates: Record<number, boolean>;        // correct open/closed per valve (Observer only)
+  valveCount: number;
+  submitted: boolean;
 }
 
 export interface SequenceState {

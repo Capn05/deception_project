@@ -3,6 +3,8 @@ import { usePuzzleStore } from '../../state/puzzleStore';
 import { PlayerRole, PuzzleType } from '@abyssal-echo/shared';
 import { PressureReader } from './pressure/PressureReader';
 import { PressureDial } from './pressure/PressureDial';
+import { ValveSchematic } from './valveroute/ValveSchematic';
+import { ValvePanel } from './valveroute/ValvePanel';
 
 export function PuzzleContainer() {
   const role = useGameStore((s) => s.role);
@@ -10,6 +12,7 @@ export function PuzzleContainer() {
   const lastResult = usePuzzleStore((s) => s.lastResult);
 
   if (lastResult) {
+    const isValveRoute = lastResult.tolerance === 0;
     return (
       <div style={{ textAlign: 'center' }}>
         <p style={{
@@ -18,10 +21,14 @@ export function PuzzleContainer() {
           letterSpacing: '4px',
           marginBottom: '1rem',
         }}>
-          {lastResult.correct ? 'MATCH CONFIRMED' : 'MISMATCH DETECTED'}
+          {isValveRoute
+            ? (lastResult.correct ? 'ROUTING CONFIRMED' : 'ROUTING FAILED')
+            : (lastResult.correct ? 'MATCH CONFIRMED' : 'MISMATCH DETECTED')}
         </p>
         <p style={{ color: 'var(--text-dim)' }}>
-          Target: {lastResult.targetValue} | Submitted: {lastResult.submittedValue} | Tolerance: +/-{lastResult.tolerance}
+          {isValveRoute
+            ? `Valves correct: ${lastResult.submittedValue} / ${lastResult.targetValue}`
+            : `Target: ${lastResult.targetValue} | Submitted: ${lastResult.submittedValue} | Tolerance: +/-${lastResult.tolerance}`}
         </p>
       </div>
     );
@@ -30,6 +37,11 @@ export function PuzzleContainer() {
   if (puzzleType === PuzzleType.PressureMatch) {
     if (role === PlayerRole.Observer) return <PressureReader />;
     if (role === PlayerRole.Operator) return <PressureDial />;
+  }
+
+  if (puzzleType === PuzzleType.WireRoute) {
+    if (role === PlayerRole.Observer) return <ValveSchematic />;
+    if (role === PlayerRole.Operator) return <ValvePanel />;
   }
 
   return (
