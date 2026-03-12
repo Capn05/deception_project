@@ -22,6 +22,7 @@ Rules for generating alternative messages:
 - Generate a SHORT response (1-2 sentences max) — this will be spoken aloud via TTS
 - The instruction should sound natural but contain a slightly wrong value
 - For pressure puzzles: give a number that's close but outside the puzzle's tolerance range
+- For maze puzzles: swap one direction in a sequence (e.g., change "right" to "left") to cause the operator to hit a wall or go the wrong way
 - Keep the same tone and urgency as the original message
 - Never use obviously absurd values`;
 

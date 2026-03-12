@@ -26,3 +26,17 @@ export const LEVIATHAN_PROBABILITY_INCREMENT = 0.10;   // +10% per round → 55%
 export const LEVIATHAN_CONTENT_CONFIDENCE_THRESHOLD = 0.7;
 export const LEVIATHAN_IDENTITY = 'leviathan';         // hidden participant identity
 export const VALVE_COUNT = 6;
+
+// Maze Navigation
+export const MAZE_GRID_SIZE = 6;
+export const MAZE_MAX_STRIKES = 1;
+
+// Simon Says
+export const SIMON_SEQUENCE_LENGTH = 4;
+export const SIMON_MAX_STRIKES = 3;
+export const SIMON_FLASH_DURATION_MS = 600;
+export const SIMON_FLASH_GAP_MS = 200;
+
+// Wire Sequence
+export const WIRE_SEQUENCE_COUNT = 8;
+export const WIRE_SEQUENCE_MAX_STRIKES = 2;

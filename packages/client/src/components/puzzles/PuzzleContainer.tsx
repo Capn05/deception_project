@@ -5,6 +5,12 @@ import { PressureReader } from './pressure/PressureReader';
 import { PressureDial } from './pressure/PressureDial';
 import { ValveSchematic } from './valveroute/ValveSchematic';
 import { ValvePanel } from './valveroute/ValvePanel';
+import { MazeObserver } from './maze/MazeObserver';
+import { MazeOperator } from './maze/MazeOperator';
+import { SimonObserver } from './simon/SimonObserver';
+import { SimonOperator } from './simon/SimonOperator';
+import { WireSequenceObserver } from './wiresequence/WireSequenceObserver';
+import { WireSequenceOperator } from './wiresequence/WireSequenceOperator';
 
 export function PuzzleContainer() {
   const role = useGameStore((s) => s.role);
@@ -12,6 +18,9 @@ export function PuzzleContainer() {
   const lastResult = usePuzzleStore((s) => s.lastResult);
 
   if (lastResult) {
+    const isWireSequence = lastResult.tolerance === -3;
+    const isSimon = lastResult.tolerance === -2;
+    const isMaze = lastResult.tolerance === -1;
     const isValveRoute = lastResult.tolerance === 0;
     return (
       <div style={{ textAlign: 'center' }}>
@@ -21,14 +30,26 @@ export function PuzzleContainer() {
           letterSpacing: '4px',
           marginBottom: '1rem',
         }}>
-          {isValveRoute
-            ? (lastResult.correct ? 'ROUTING CONFIRMED' : 'ROUTING FAILED')
-            : (lastResult.correct ? 'MATCH CONFIRMED' : 'MISMATCH DETECTED')}
+          {isWireSequence
+            ? (lastResult.correct ? 'WIRES VERIFIED' : 'WIRES FAILED')
+            : isSimon
+              ? (lastResult.correct ? 'SEQUENCE COMPLETE' : 'SEQUENCE FAILED')
+              : isMaze
+                ? (lastResult.correct ? 'MAZE NAVIGATED' : 'NAVIGATION FAILED')
+                : isValveRoute
+                  ? (lastResult.correct ? 'ROUTING CONFIRMED' : 'ROUTING FAILED')
+                  : (lastResult.correct ? 'MATCH CONFIRMED' : 'MISMATCH DETECTED')}
         </p>
         <p style={{ color: 'var(--text-dim)' }}>
-          {isValveRoute
-            ? `Valves correct: ${lastResult.submittedValue} / ${lastResult.targetValue}`
-            : `Target: ${lastResult.targetValue} | Submitted: ${lastResult.submittedValue} | Tolerance: +/-${lastResult.tolerance}`}
+          {isWireSequence
+            ? `Wires: ${lastResult.submittedValue} / ${lastResult.targetValue}`
+            : isSimon
+              ? `Stages: ${lastResult.submittedValue} / ${lastResult.targetValue}`
+              : isMaze
+                ? `Strikes: ${lastResult.submittedValue} / ${lastResult.targetValue}`
+                : isValveRoute
+                  ? `Valves correct: ${lastResult.submittedValue} / ${lastResult.targetValue}`
+                  : `Target: ${lastResult.targetValue} | Submitted: ${lastResult.submittedValue} | Tolerance: +/-${lastResult.tolerance}`}
         </p>
       </div>
     );
@@ -42,6 +63,21 @@ export function PuzzleContainer() {
   if (puzzleType === PuzzleType.WireRoute) {
     if (role === PlayerRole.Observer) return <ValveSchematic />;
     if (role === PlayerRole.Operator) return <ValvePanel />;
+  }
+
+  if (puzzleType === PuzzleType.MazeNavigation) {
+    if (role === PlayerRole.Observer) return <MazeObserver />;
+    if (role === PlayerRole.Operator) return <MazeOperator />;
+  }
+
+  if (puzzleType === PuzzleType.SequenceInput) {
+    if (role === PlayerRole.Observer) return <SimonObserver />;
+    if (role === PlayerRole.Operator) return <SimonOperator />;
+  }
+
+  if (puzzleType === PuzzleType.WireSequence) {
+    if (role === PlayerRole.Observer) return <WireSequenceObserver />;
+    if (role === PlayerRole.Operator) return <WireSequenceOperator />;
   }
 
   return (

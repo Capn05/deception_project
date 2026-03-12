@@ -8,10 +8,18 @@ export class ValveRoutePuzzle {
     this.targetStates = {};
     this.currentValves = [];
 
-    for (let i = 1; i <= VALVE_COUNT; i++) {
-      // ~half valves should be open
-      this.targetStates[i] = Math.random() < 0.5;
-      this.currentValves.push({ id: i, isOpen: false });
+    // Create valve IDs and shuffle their display order
+    const ids = Array.from({ length: VALVE_COUNT }, (_, i) => i + 1);
+    for (let i = ids.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [ids[i], ids[j]] = [ids[j], ids[i]];
+    }
+
+    for (const id of ids) {
+      // ~half valves should be open as target
+      this.targetStates[id] = Math.random() < 0.5;
+      // Randomize initial valve state for operator
+      this.currentValves.push({ id, isOpen: Math.random() < 0.5 });
     }
   }
 

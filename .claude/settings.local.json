@@ -17,7 +17,9 @@
       "Bash(ls:*)",
       "Bash(xargs:*)",
       "Bash(npx tsc:*)",
-      "WebFetch(domain:cartesia.ai)"
+      "WebFetch(domain:cartesia.ai)",
+      "WebFetch(domain:ktane.fandom.com)",
+      "WebFetch(domain:www.bombmanual.com)"
     ]
   }
 }
