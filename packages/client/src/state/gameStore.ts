@@ -26,6 +26,7 @@ interface GameState {
   setLeviathanActive: (active: boolean) => void;
   setSearching: (searching: boolean) => void;
   reset: () => void;
+  leaveGame: () => void;
 }
 
 export const useGameStore = create<GameState>((set) => ({
@@ -57,6 +58,18 @@ export const useGameStore = create<GameState>((set) => ({
     role: null,
     roomId: null,
     playerId: null,
+    partnered: false,
+    battery: 100,
+    transmitting: false,
+    receiving: false,
+    timerRemaining: 0,
+    leviathanActive: false,
+    searching: false,
+  }),
+  leaveGame: () => set({
+    phase: GamePhase.Lobby,
+    role: null,
+    roomId: null,
     partnered: false,
     battery: 100,
     transmitting: false,

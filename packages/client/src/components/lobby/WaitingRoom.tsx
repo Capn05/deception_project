@@ -6,7 +6,13 @@ export function WaitingRoom() {
   const roomId = useGameStore((s) => s.roomId);
   const role = useGameStore((s) => s.role);
   const partnered = useGameStore((s) => s.partnered);
+  const leaveGame = useGameStore((s) => s.leaveGame);
   const [isReady, setIsReady] = useState(false);
+
+  const handleLeave = () => {
+    socketService.send({ type: 'LEAVE_GAME' });
+    leaveGame();
+  };
 
   return (
     <div style={{
@@ -58,6 +64,22 @@ export function WaitingRoom() {
           AWAITING PARTNER...
         </p>
       )}
+
+      <button
+        onClick={handleLeave}
+        style={{
+          background: 'transparent',
+          color: 'var(--text-dim)',
+          border: '1px solid var(--text-dim)',
+          padding: '8px 24px',
+          fontSize: '0.8rem',
+          letterSpacing: '3px',
+          marginTop: '1rem',
+          cursor: 'pointer',
+        }}
+      >
+        LEAVE
+      </button>
     </div>
   );
 }

@@ -33,6 +33,10 @@ export interface CancelFindGameMessage {
   type: 'CANCEL_FIND_GAME';
 }
 
+export interface LeaveGameMessage {
+  type: 'LEAVE_GAME';
+}
+
 export type ClientMessage =
   | CreateRoomMessage
   | JoinRoomMessage
@@ -40,7 +44,8 @@ export type ClientMessage =
   | PuzzleActionMessage
   | CalibrationCompleteMessage
   | FindGameMessage
-  | CancelFindGameMessage;
+  | CancelFindGameMessage
+  | LeaveGameMessage;
 
 // ── Server → Client ──
 

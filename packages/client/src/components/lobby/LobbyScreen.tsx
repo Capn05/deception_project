@@ -109,9 +109,17 @@ export function LobbyScreen() {
             letterSpacing: '3px',
           }}
         >
-          CREATE ROOM
+          PLAY WITH FRIEND
         </button>
 
+        <p style={{
+          color: 'var(--text-dim)',
+          fontSize: '0.75rem',
+          letterSpacing: '2px',
+          marginBottom: '-0.5rem',
+        }}>
+          Have a code?
+        </p>
         <div style={{ display: 'flex', gap: '0.5rem' }}>
           <input
             type="text"

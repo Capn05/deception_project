@@ -39,6 +39,9 @@ export class MessageRouter {
       case 'CANCEL_FIND_GAME':
         this.matchmakingQueue.dequeue(playerId);
         break;
+      case 'LEAVE_GAME':
+        this.handleDisconnect(playerId);
+        break;
       default:
         console.warn(`[Router] Unknown message type`);
     }
