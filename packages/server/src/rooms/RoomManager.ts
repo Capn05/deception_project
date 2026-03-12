@@ -69,6 +69,10 @@ export class RoomManager {
     this.playerRooms.delete(playerId);
   }
 
+  getPlayerRoomId(playerId: string): string | undefined {
+    return this.playerRooms.get(playerId);
+  }
+
   private getPlayerRoom(playerId: string): GameRoom | undefined {
     const roomId = this.playerRooms.get(playerId);
     return roomId ? this.rooms.get(roomId) : undefined;

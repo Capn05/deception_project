@@ -6,7 +6,7 @@ import { PuzzleType } from '@abyssal-echo/shared';
 
 export function useGameSocket() {
   const {
-    setPhase, setRole, setRoomId, setPlayerId, setPartnered, setTimerRemaining, setLeviathanActive,
+    setPhase, setRole, setRoomId, setPlayerId, setPartnered, setTimerRemaining, setLeviathanActive, setSearching,
   } = useGameStore();
   const { setPuzzleState, setResult, reset: resetPuzzle } = usePuzzleStore();
 
@@ -20,8 +20,12 @@ export function useGameSocket() {
           break;
         case 'ROOM_CREATED':
         case 'ROOM_JOINED':
+          setSearching(false);
           setRoomId(msg.roomId);
           if (msg.type === 'ROOM_JOINED') setRole(msg.role);
+          break;
+        case 'QUEUE_STATUS':
+          setSearching(msg.searching);
           break;
         case 'PARTNER_CONNECTED':
           setPartnered(true);

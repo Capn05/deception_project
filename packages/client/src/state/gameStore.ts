@@ -12,6 +12,7 @@ interface GameState {
   receiving: boolean;
   timerRemaining: number;
   leviathanActive: boolean;
+  searching: boolean;
 
   setPhase: (phase: GamePhase) => void;
   setRole: (role: PlayerRole) => void;
@@ -23,6 +24,7 @@ interface GameState {
   setReceiving: (receiving: boolean) => void;
   setTimerRemaining: (remaining: number) => void;
   setLeviathanActive: (active: boolean) => void;
+  setSearching: (searching: boolean) => void;
   reset: () => void;
 }
 
@@ -37,6 +39,7 @@ export const useGameStore = create<GameState>((set) => ({
   receiving: false,
   timerRemaining: 0,
   leviathanActive: false,
+  searching: false,
 
   setPhase: (phase) => set({ phase }),
   setRole: (role) => set({ role }),
@@ -48,6 +51,7 @@ export const useGameStore = create<GameState>((set) => ({
   setReceiving: (receiving) => set({ receiving }),
   setTimerRemaining: (remaining) => set({ timerRemaining: remaining }),
   setLeviathanActive: (active) => set({ leviathanActive: active }),
+  setSearching: (searching) => set({ searching }),
   reset: () => set({
     phase: GamePhase.Lobby,
     role: null,
@@ -59,5 +63,6 @@ export const useGameStore = create<GameState>((set) => ({
     receiving: false,
     timerRemaining: 0,
     leviathanActive: false,
+    searching: false,
   }),
 }));

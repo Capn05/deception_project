@@ -25,12 +25,22 @@ export interface CalibrationCompleteMessage {
   type: 'CALIBRATION_COMPLETE';
 }
 
+export interface FindGameMessage {
+  type: 'FIND_GAME';
+}
+
+export interface CancelFindGameMessage {
+  type: 'CANCEL_FIND_GAME';
+}
+
 export type ClientMessage =
   | CreateRoomMessage
   | JoinRoomMessage
   | ReadyMessage
   | PuzzleActionMessage
-  | CalibrationCompleteMessage;
+  | CalibrationCompleteMessage
+  | FindGameMessage
+  | CancelFindGameMessage;
 
 // ── Server → Client ──
 
@@ -87,6 +97,11 @@ export interface ErrorMessage {
   message: string;
 }
 
+export interface QueueStatusMessage {
+  type: 'QUEUE_STATUS';
+  searching: boolean;
+}
+
 export interface LeviathanInterceptMessage {
   type: 'LEVIATHAN_INTERCEPT';
   targetPlayerId: string;
@@ -104,4 +119,5 @@ export type ServerMessage =
   | PuzzleResultMessage
   | TimerUpdateMessage
   | ErrorMessage
+  | QueueStatusMessage
   | LeviathanInterceptMessage;
