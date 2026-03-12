@@ -18,6 +18,10 @@ const PORT = parseInt(process.env.PORT || '3001', 10);
 
 app.use(express.json());
 
+// Serve client static files in production
+const clientDist = resolve(__dirname, '../../client/dist');
+app.use(express.static(clientDist));
+
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 
 const livekitManager = new LiveKitManager();
@@ -56,6 +60,11 @@ app.post('/api/voice-calibration', upload.single('audio'), async (req, res) => {
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
+});
+
+// SPA fallback — serve index.html for non-API routes
+app.get('*', (_req, res) => {
+  res.sendFile(resolve(clientDist, 'index.html'));
 });
 
 const server = createServer(app);
