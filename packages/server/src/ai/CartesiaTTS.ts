@@ -15,7 +15,7 @@ export class CartesiaTTS {
   async createVoiceClone(audioSample: Buffer): Promise<string> {
     // Step 1: Get voice embedding from audio clip
     const formData = new FormData();
-    const blob = new Blob([audioSample], { type: 'audio/webm' });
+    const blob = new Blob([new Uint8Array(audioSample)], { type: 'audio/webm' });
     formData.append('clip', blob, 'calibration.webm');
     formData.append('mode', 'similarity');
     formData.append('language', 'en');
