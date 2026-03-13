@@ -10,7 +10,10 @@ export function useLiveKit() {
   const connectedRef = useRef(false);
 
   useEffect(() => {
-    if (!roomId || !playerId || connectedRef.current) return;
+    if (!roomId || !playerId) return;
+
+    // Prevent duplicate connections for the same room
+    if (connectedRef.current) return;
     connectedRef.current = true;
 
     livekitService.setOnRemoteTrack((track, participantIdentity) => {
@@ -19,6 +22,11 @@ export function useLiveKit() {
     });
 
     livekitService.connect(roomId, playerId).catch(console.error);
+
+    return () => {
+      connectedRef.current = false;
+      livekitService.disconnect();
+    };
   }, [roomId]);
 
   return { analyser };
