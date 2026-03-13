@@ -203,8 +203,12 @@ export class LeviathanPipeline {
       // 7. Unmute the real player and notify clients after audio finishes
       const audioDurationMs = (synthAudio.byteLength / 2 / 48000) * 1000; // PCM s16le at 48kHz
       setTimeout(async () => {
-        await this.livekitManager.mutePlayer(roomId, playerId, false);
-        this.onIntercept?.(roomId, playerId, false);
+        try {
+          await this.livekitManager.mutePlayer(roomId, playerId, false);
+          this.onIntercept?.(roomId, playerId, false);
+        } catch (err) {
+          console.error(`[LeviathanPipeline] Failed to unmute ${playerId}:`, err);
+        }
       }, audioDurationMs + 500);
 
       // Record the interception
@@ -242,6 +246,15 @@ export class LeviathanPipeline {
     if (!session) return;
 
     session.active = false;
+
+    // Ensure all players are unmuted before leaving
+    for (const playerId of session.playerIds) {
+      try {
+        await this.livekitManager.mutePlayer(roomId, playerId, false);
+      } catch (err) {
+        console.error(`[LeviathanPipeline] Failed to unmute ${playerId} on stop:`, err);
+      }
+    }
 
     // Stop all STT streams
     for (const [playerId, stream] of session.playerStreams) {
