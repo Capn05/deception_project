@@ -12,7 +12,7 @@ export class WebSocketServer {
 
   constructor(server: Server, leviathanPipeline?: LeviathanPipeline, voiceProfileStore?: VoiceProfileStore) {
     this.router = new MessageRouter(leviathanPipeline, voiceProfileStore);
-    this.wss = new WSServer({ server });
+    this.wss = new WSServer({ server, path: '/ws' });
 
     this.wss.on('connection', (ws) => {
       const playerId = uuid();

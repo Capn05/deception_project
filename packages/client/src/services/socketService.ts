@@ -12,7 +12,7 @@ class SocketService {
 
   connect(url?: string) {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    this.url = url || `${protocol}//${window.location.host}`;
+    this.url = url || `${protocol}//${window.location.host}/ws`;
 
     // Don't create duplicate connections
     if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {

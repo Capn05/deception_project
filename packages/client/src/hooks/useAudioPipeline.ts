@@ -24,8 +24,9 @@ export function useAudioPipeline() {
     }
 
     // Poll analyser to detect incoming audio (after delay chain)
+    if (!analyserRef.current) return;
     if (pollRef.current) clearInterval(pollRef.current);
-    const dataArray = new Uint8Array(analyserRef.current!.fftSize);
+    const dataArray = new Uint8Array(analyserRef.current.fftSize);
     pollRef.current = setInterval(() => {
       if (!analyserRef.current) return;
       analyserRef.current.getByteTimeDomainData(dataArray);

@@ -39,7 +39,7 @@ export class AudioPipeline {
     // Attach stream to hidden <audio> to activate WebRTC track
     this.hiddenAudio = document.createElement('audio');
     this.hiddenAudio.srcObject = stream;
-    this.hiddenAudio.muted = true;
+    this.hiddenAudio.volume = 0;
     this.hiddenAudio.play().catch(() => {});
     console.log('[AudioPipeline] Hidden audio element attached to activate WebRTC track');
 
